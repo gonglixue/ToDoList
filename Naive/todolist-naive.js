@@ -5,7 +5,8 @@ var gDoneCount;
 function addTodoItem(e){
     var item = {
         todo: "default",
-        done: false
+        done: false,
+        item_id: gTodolist.length
     };
     var user_input = document.getElementById("input_item").value = document.getElementById("input_item").value.trim()
 
@@ -38,8 +39,7 @@ function renderSingleItem(item)
 
     if(item.done)
     {
-        var done_item = document.createElement("li");
-        done_item.innerText = item.todo;
+        var done_item = createItemDom(item);
         donelist_dom.appendChild(done_item);
         gDoneCount++;
 
@@ -47,8 +47,7 @@ function renderSingleItem(item)
     }
     else
     {
-        var todo_item = document.createElement("li");
-        todo_item.innerText = item.todo;
+        var todo_item = createItemDom(item);
         todolist_dom.appendChild(todo_item);
         gTodoCount++;
 
@@ -77,15 +76,14 @@ function renderAllItems()
             var item = gTodolist[i];
             if(item.done)
             {
-                var done_item = document.createElement("li");
-                done_item.innerText = item.todo;
+                var done_item = createItemDom(item);
                 donelist_dom.appendChild(done_item);
+
                 doneCount++;
             }
             else
             {
-                var todo_item = document.createElement("li");
-                todo_item.innerText = item.todo;
+                var todo_item = createItemDom(item);
 
                 todolist_dom.appendChild(todo_item);
                 todoCount++;
@@ -144,5 +142,50 @@ function load()
     document.getElementById("clear-btn").onclick = clear
 }
 
+function createItemDom(item)
+{
+    var item_dom = document.createElement("li");
+    var item_checkbox = document.createElement("input");
+    item_checkbox.type="checkbox"
+    item_checkbox.checked = item.done;
+    item_checkbox.onchange = changeTodoCheckbox;
+    item_checkbox.setAttribute("item-id", item.item_id);
+    item_dom.appendChild(item_checkbox);
+
+    var item_content_dom = document.createElement("p");
+    item_content_dom.innerText = item.todo;
+
+    item_dom.appendChild(item_content_dom);
+
+    return item_dom;
+
+}
+
+function changeTodoCheckbox(e)
+{
+    var item_id = e.srcElement.getAttribute("item-id");
+    console.log(item_id);
+
+    // remove dom node from todo to done, or from done to doto
+    
+
+    // find item
+    var item;
+    for(var i=0; i<gTodolist.length; i++)
+    {
+        if(gTodolist[i].item_id == item_id);
+        {
+            gTodolist[i].done = true;
+            item = gTodolist[i];
+        }
+    }
+    if(item==null)
+    {
+        console.log("Error: no item with id " + item_id);
+        return;
+    }
+
+    saveDataToCache(gTodolist);
+}
 
 window.addEventListener("load", load);
