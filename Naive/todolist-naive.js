@@ -166,8 +166,7 @@ function changeTodoCheckbox(e)
     var item_id = e.srcElement.getAttribute("item-id");
     console.log(item_id);
 
-    // remove dom node from todo to done, or from done to doto
-    
+
 
     // find item
     var item;
@@ -175,7 +174,7 @@ function changeTodoCheckbox(e)
     {
         if(gTodolist[i].item_id == item_id);
         {
-            gTodolist[i].done = true;
+            gTodolist[i].done = !gTodolist[i].done;
             item = gTodolist[i];
         }
     }
@@ -184,6 +183,30 @@ function changeTodoCheckbox(e)
         console.log("Error: no item with id " + item_id);
         return;
     }
+
+    // remove dom node from todo to done, or from done to doto
+    var selected_dom = e.srcElement.parentNode;
+    var todocount_dom = document.getElementById("todocount");
+    var donecount_dom = document.getElementById("donecount");
+
+    // append
+    if(item.done){
+        // append to done
+        var donelist_dom = document.getElementById("donelist");
+        selected_dom.parentNode.removeChild(selected_dom);
+        donelist_dom.appendChild(selected_dom);
+        gDoneCount++;
+        gTodoCount--;
+    }
+    else{
+        var todolist_dom = document.getElementById("todolist");
+        selected_dom.parentNode.removeChild(selected_dom);
+        todolist_dom.appendChild(selected_dom);
+        gDoneCount--;
+        gTodoCount++;
+    }
+    todocount_dom.innerText = gTodoCount.toString();
+    donecount_dom.innerText = gDoneCount.toString();
 
     saveDataToCache(gTodolist);
 }
