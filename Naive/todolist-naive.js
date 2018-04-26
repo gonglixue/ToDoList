@@ -145,11 +145,12 @@ function load()
 function createItemDom(item)
 {
     var item_dom = document.createElement("li");
+    item_dom.setAttribute("item-id", item.item_id)
     var item_checkbox = document.createElement("input");
     item_checkbox.type="checkbox"
     item_checkbox.checked = item.done;
     item_checkbox.onchange = changeTodoCheckbox;
-    item_checkbox.setAttribute("item-id", item.item_id);
+    // item_checkbox.setAttribute("item-id", item.item_id);
     item_dom.appendChild(item_checkbox);
 
     var item_content_dom = document.createElement("p");
@@ -157,13 +158,55 @@ function createItemDom(item)
 
     item_dom.appendChild(item_content_dom);
 
+    var delete_btn = document.createElement('span')
+    delete_btn.innerText = 'del'
+    delete_btn.onclick = deleteItem
+
+    item_dom.appendChild(delete_btn)
+
     return item_dom;
 
 }
 
+function deleteItem(e)
+{
+    var item_id = e.srcElement.parentElement.getAttribute("item-id")
+
+    // find item
+    var item;
+    for(var i=0; i<gTodolist.length; i++)
+    {
+        if(gTodolist[i].item_id == item_id)
+        {
+            item = gTodolist[i]
+            gTodolist.splice(i, 1)
+            break;
+        }
+    }
+    if(item == null)
+    {
+        console.log("Error: no item with id " + item_id)
+        return
+    }
+
+    // 移除DOM
+    var selected_dom = e.srcElement.parentElement
+    selected_dom.parentElement.removeChild(selected_dom)
+    // 更新count
+    var todocount_dom = document.getElementById("todocount");
+    var donecount_dom = document.getElementById("donecount");
+    if(item.done){
+        donecount_dom.innerText = (--gDoneCount).toString();
+    }else{
+        todocount_dom.innerText = (--gTodoCount).toString();
+    }
+
+    saveDataToCache(gTodolist);
+}
+
 function changeTodoCheckbox(e)
 {
-    var item_id = e.srcElement.getAttribute("item-id");
+    var item_id = e.srcElement.parentElement.getAttribute("item-id");
     console.log(item_id);
 
 
@@ -172,7 +215,7 @@ function changeTodoCheckbox(e)
     var item;
     for(var i=0; i<gTodolist.length; i++)
     {
-        if(gTodolist[i].item_id == item_id);
+        if(gTodolist[i].item_id == item_id)
         {
             gTodolist[i].done = !gTodolist[i].done;
             item = gTodolist[i];
