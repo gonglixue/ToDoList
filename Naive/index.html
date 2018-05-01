@@ -4,28 +4,31 @@
     <meta charset="UTF-8">
     <title>待办事项</title>
     <script src="todolist-naive.js"></script>
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
     <header>
         <section>
+            <div class="header-form-container">
             <label for="input_item">待办事项</label>
             <input type="text" id="input_item" name="input_item" placeholder="添加事项" required>
+            </div>
         </section>
     </header>
 
     <div class="content">
-        <h1>未完成<span id="todocount"></span></h1>
+        <h2>未完成 <span id="todocount"></span></h2>
         <ol id="todolist">
         </ol>
 
-        <h1>已完成<span id="donecount"></span></h1>
+        <h2>已完成 <span id="donecount"></span></h2>
         <ol id="donelist">
         </ol>
     </div>
 
     <div id="clear">
-        <span stype="white-space:pre;"></span>
-        <button id="clear-btn"><h3>全部清除</h3></button>
+        <!--span stype="white-space:pre;"></span-->
+        <button id="clear-btn">全部清除</button>
     </div>
 </body>
 </html>

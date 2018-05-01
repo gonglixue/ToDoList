@@ -159,7 +159,7 @@ function createItemDom(item)
     item_dom.appendChild(item_content_dom);
 
     var delete_btn = document.createElement('span')
-    delete_btn.innerText = 'del'
+    delete_btn.innerText = '-'
     delete_btn.onclick = deleteItem
 
     item_dom.appendChild(delete_btn)
