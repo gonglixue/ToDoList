@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To Do List</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+<div id="main-app">
+
+    <header>
+        <section>
+            <div class="header-form-container">
+                <label for="input-item">待办事项</label>
+                <input type="text" id="input-item"
+                       name="inputItem" v-model="inputItem"
+                       v-on:keyup.enter="addTodoItem"
+                       required>
+            </div>
+        </section>
+    </header>
+    <div class="content">
+        <h2>未完成 <span id="todo-count">{{todoList.length}}</span></h2>
+        <ol id="todo-list">
+            <my-item
+                    v-for="item in todoList"
+                    v-bind:item="item"
+                    v-bind:key="item.id">
+            </my-item>
+        </ol>
+
+        <h2>已完成 <span id="done-count">{{doneList.length}}</span></h2>
+        <ol id="done-list">
+            <my-item
+                v-for="item in doneList"
+                v-bind:item="item"
+                v-bind:key="item.id">
+            </my-item>
+        </ol>
+    </div>
+
+    <div id="clear">
+        <!--span stype="white-space:pre;"></span-->
+        <button id="clear-btn">全部清除</button>
+    </div>
+</div>
+<script>
+    Vue.component('my-item',{
+        props: ['item'],
+        template: '<li> {{item.content}} <span v-bind:delId="item.id" v-on:click="delItem(item.id)"> del</span></li>'
+    })
+
+    var app = new Vue({
+        el: '#main-app',
+        data:{
+            todoList:[
+                {id: 0, content:'吃饭'},
+                {id: 1, content:'睡觉'}
+            ],
+            doneList:[
+                {id: 0, content:'打游戏'}
+            ],
+            inputItem: '添加待办事项'
+        },
+        methods:{
+            addTodoItem: function(){
+                this.inputItem = this.inputItem.trim();
+                if(this.inputItem.length == 0)
+                    return;
+                console.log("add item: " + this.inputItem)
+                this.todoList.push(
+                    {
+                        id: Math.round(Math.random() * 10000),
+                        content: this.inputItem
+                    }
+                )
+            },
+            delItem: function(delId)
+            {
+                console.log("delete " + delId);
+            }
+        }
+
+    })
+
+
+</script>
+</body>
+</html>
