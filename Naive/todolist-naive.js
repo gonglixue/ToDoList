@@ -2,13 +2,13 @@ var gTodolist = []
 var gTodoCount;
 var gDoneCount;
 
-function addTodoItem(e){
+function addTodoItem(input_value){
     var item = {
         todo: "default",
         done: false,
         item_id: gTodolist.length
     };
-    var user_input = document.getElementById("input_item").value = document.getElementById("input_item").value.trim()
+    var user_input = input_value.trim()
 
     if(user_input.length == 0){
         return;
@@ -110,7 +110,7 @@ function loadDataFromCache()
 {
     var localData = localStorage.getItem("myTodoList");
     if(localData != null)
-        return JSON.parse(localData);   // JSON对象转JS对下那个
+        return JSON.parse(localData);   // JSON对象转JS对象
 
     else
         return []
@@ -135,7 +135,8 @@ function load()
     input.onkeypress = function(event)
     {
         if(event.keyCode === 13){
-            addTodoItem();
+            addTodoItem(event.srcElement.value);
+            event.srcElement.value = event.srcElement.value.trim();
         }
     }
 
@@ -154,15 +155,21 @@ function createItemDom(item)
     item_dom.appendChild(item_checkbox);
 
     var item_content_dom = document.createElement("p");
+    item_content_dom.className = "item-content"
     item_content_dom.innerText = item.todo;
 
     item_dom.appendChild(item_content_dom);
 
     var delete_btn = document.createElement('span')
-    delete_btn.innerText = '-'
+    delete_btn.innerText = ' Del '
     delete_btn.onclick = deleteItem
 
+    var edit_btn = document.createElement('span')
+    edit_btn.innerText = ' Edit '
+    edit_btn.onclick = editItem
+
     item_dom.appendChild(delete_btn)
+    item_dom.append(edit_btn)
 
     return item_dom;
 
@@ -202,6 +209,64 @@ function deleteItem(e)
     }
 
     saveDataToCache(gTodolist);
+}
+
+function editItem(e)
+{
+    var item_id = e.srcElement.parentElement.getAttribute("item-id")
+
+    // find item
+    var item;
+    for(var i=0; i<gTodolist.length; i++)
+    {
+        if(gTodolist[i].item_id == item_id)
+        {
+            item = gTodolist[i];
+            // item.todo = "renew item";
+            item_content_p = e.srcElement.parentElement.getElementsByClassName("item-content")[0];
+            warp_editing_box(item_content_p, item.todo, i);
+            break;
+        }
+    }
+    if(item == null)
+    {
+        console.log("Error: no item with id " + item_id)
+        return
+    }
+
+    // saveDataToCache(gTodolist)
+}
+
+function warp_editing_box(item_dom, old_todo_str, id)
+{
+    console.log("warp editing box")
+
+    item_dom.innerHTML = ""
+    var editing_box = document.createElement("input")
+    editing_box.className = "editing-box"
+    editing_box.value = old_todo_str
+    editing_box.id = id;
+
+    editing_box.onkeypress = function(event)
+    {
+        if(event.keyCode === 13){
+            // renew
+            event.srcElement.value = event.srcElement.value.trim()
+            renewItemById(id, event.srcElement.value.trim())
+            // destropy input box
+            event.srcElement.parentElement.innerText = event.srcElement.value.trim()
+            // event.srcElement.parentElement.removeChild(event.srcElement)
+        }
+    }
+
+
+    item_dom.appendChild(editing_box)
+}
+
+function renewItemById(id, new_str)
+{
+    gTodolist[id].todo = new_str;
+    saveDataToCache(gTodolist)
 }
 
 function changeTodoCheckbox(e)
